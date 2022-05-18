@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!--new line-->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@500;600&family=Quicksand&family=Roboto+Slab:wght@600&display=swap"
+        rel="stylesheet">
+
+
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                Helvetica, Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin: auto;
+            padding-top: 100px;
+            /*new line*/
+            font-size: 40px;
+            /*new line*/
+            font-family: 'roboto slab';
+            /*new line*/
+            color: white;
+        }
+
+        .container {
+            height: 500px;
+            width: 500px;
+            margin: auto;
+            display: block;
+            margin-top: 2%;
+
+            border-top-left-radius: 2rem;
+            border-top-right-radius: 2rem;
+
+            background-image: linear-gradient(to right bottom, #edb193, #e7bea9, #f7d5c4);
+            /*background-color: #d9a4a6; /*new line*/
+        }
+
+        #form {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.25rem;
+            position: absolute;
+            margin: 0;
+            width: 500px;
+            display: none;
+
+            height: 3rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+
+        }
+
+        #input {
+            border: none;
+            padding: 0 1rem;
+            flex-grow: 1;
+            border-radius: 2rem;
+            margin: 0.25rem;
+        }
+
+        #input:focus {
+            outline: none;
+        }
+
+        #form>button {
+            background: #edb193;
+            /*new*/
+            border: none;
+            padding: 0 1rem;
+            margin: 0.25rem;
+            border-radius: 10px;
+            outline: none;
+            color: #fff;
+            cursor: pointer;
+            /*new*/
+            font-family: 'roboto slab';
+            /*new*/
+        }
+
+        #form0 {
+            background: rgba(0, 0, 0, 0.15);
+            font-family: 'roboto slab';
+            /*new*/
+            padding: 0.25rem;
+            position: fixed;
+            margin: 0;
+            width: 500px;
+            display: flex;
+            bottom: 24%;
+            height: 3rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+
+        #name {
+            border: none;
+            padding: 0 1rem;
+            flex-grow: 1;
+            border-radius: 2rem;
+            margin: 0.25rem;
+        }
+
+        #name:focus {
+            outline: none;
+        }
+
+        #form0>span {
+            background: #423833;
+            border: none;
+            padding: 0 1rem;
+            padding-top: 2.5px;
+            margin: 0.25rem;
+            border-radius: 10px;
+            outline: none;
+            color: #fff;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages>li {
+            padding: 0.5rem 1rem;
+        }
+
+        #messages>li:nth-child(odd) {
+            background: #fcfaf8;
+        }
+
+        .text1 {
+            font-family: 'roboto slab';
+            font-size: 28px;
+            margin: 40px;
+            margin-top: 10px;
+            text-align: start;
+            color: white;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <ul id="messages"></ul>
+
+        <div id="con">
+            <h1>
+                WELCOME! <br>
+                <div class="text1">Connect to Your <br> Friends with <br>our chat </div>
+
+            </h1>
+
+
+            <span></span>
+            <form id="form0">
+                <input id="name" />
+                <span onclick="takename()" style="cursor:pointer">Login</span>
+            </form>
+        </div>
+
+        <form id="form" action="">
+            <input id="input" autocomplete="off" />
+            <span onclick="addemoj(e ='&#128512;')"> &#128512; </span>
+            <span onclick="addemoj(e ='&#128525;')"> &#128525; </span>
+            <span onclick="addemoj(e ='&#128151;')"> &#128151; </span>
+
+
+            <button>Send</button>
+        </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        var socket = io();
+
+        function addemoj(e) {
+            document.getElementById("input").value += e;
+        }
+
+        var names = ["rwan", "eman", "noran", "salem", "mahmoud"];
+        var colors = ["cyan", "red", "pink", "blue", "green"];
+        var name = "";
+        var color = "";
+        var time = new Date();
+        const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        function takename() {
+            let nameval = document.getElementById("name").value;
+            if (names.includes(nameval)) {
+                name = nameval;
+                color = colors[names.indexOf(name)];
+
+                document.getElementById("con").style.display = "none";
+                document.getElementById("form").style.display = "flex";
+            }
+        }
+
+
+        var messages = document.getElementById("messages");
+        var form = document.getElementById("form");
+        var input = document.getElementById("input");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            if (input.value) {
+                let msg = {
+                    name: name,
+                    color: color,
+                    value: input.value,
+                    day: time.getDate(),
+                    month: month[time.getMonth()],
+                    year: time.getFullYear(),
+                   
+                };
+                socket.emit("chat message", msg);
+                input.value = "";
+            }
+        });
+        //time
+        function formatAMPM(date) {
+            var hours = time.getHours();
+            var minutes = time.getMinutes();
+            var ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            var strTime = hours + ':' + minutes + ' ' + ampm;
+            return strTime;
+        }
+
+
+        socket.on("chat message", function (msg) {
+            var item = document.createElement("li");
+            item.innerHTML =
+                "<span style='color:" +
+                msg.color +
+                ";'>" +
+                msg.name +
+                " : </span>" +
+                " " +
+                msg.value +
+                " <br/>" +
+                msg.month +
+                " " +
+                msg.day +
+                ", " +
+                msg.year +
+                " " +
+                 formatAMPM(new Date);
+            
+            // item.textContent = msg;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+
+</html>
