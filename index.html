@@ -167,12 +167,12 @@
                 <span onclick="takename()" style="cursor:pointer">Login</span>
             </form>
         </div>
-
+        <!--emoji-->
         <form id="form" action="">
             <input id="input" autocomplete="off" />
-            <span onclick="addemoj(e ='&#128512;')"> &#128512; </span>
-            <span onclick="addemoj(e ='&#128525;')"> &#128525; </span>
-            <span onclick="addemoj(e ='&#128151;')"> &#128151; </span>
+            <span style="cursor:pointer" onclick="addemoj(e ='&#128512;')"> &#128512; </span>
+            <span style="cursor:pointer" onclick="addemoj(e ='&#128525;')"> &#128525; </span>
+            <span style="cursor:pointer" onclick="addemoj(e ='&#128151;')"> &#128151; </span>
 
 
             <button>Send</button>
@@ -193,6 +193,7 @@
         var color = "";
         var time = new Date();
         const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            
         function takename() {
             let nameval = document.getElementById("name").value;
             if (names.includes(nameval)) {
